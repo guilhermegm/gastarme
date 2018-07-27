@@ -11,4 +11,28 @@ describe('Wallet Controller', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(201)
   })
+
+  it('should get wallets of user', async () => {
+    await request(app)
+      .get('/wallets')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .then(response => {
+        expect(response.body[0]).toHaveProperty('id')
+        expect(response.body[0]).toHaveProperty('limit')
+        expect(response.body[0]).toHaveProperty('available_limit')
+      })
+  })
+
+  it('should get wallet of user by id', async () => {
+    await request(app)
+      .get('/wallets/4')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .then(response => {
+        expect(response.body).toHaveProperty('id')
+        expect(response.body).toHaveProperty('limit')
+        expect(response.body).toHaveProperty('available_limit')
+      })
+  })
 })
