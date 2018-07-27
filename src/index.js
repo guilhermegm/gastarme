@@ -2,14 +2,19 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const UserFactory = require('./models/User')
 const UserControllerFactory = require('./controllers/User')
+const WalletFactory = require('./models/Wallet')
+const WalletControllerFactory = require('./controllers/Wallet')
 
 const app = express()
 const User = UserFactory()
+const Wallet = WalletFactory()
 const UserController = UserControllerFactory({ User })
+const WalletController = WalletControllerFactory({ User, Wallet })
 
 app.use(bodyParser.json())
 
 app.use('/', UserController)
+app.use(WalletController)
 
 app.use((error, req, res, next) => {
   if (error.isJoi) {
