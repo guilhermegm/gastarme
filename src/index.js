@@ -1,9 +1,15 @@
 const bodyParser = require('body-parser')
 const express = require('express')
+const UserFactory = require('./models/User')
+const UserControllerFactory = require('./controllers/User')
 
 const app = express()
+const User = UserFactory()
+const UserController = UserControllerFactory({ User })
 
 app.use(bodyParser.json())
+
+app.use('/users', UserController)
 
 app.use((error, req, res, next) => {
   if (error.isJoi) {
@@ -18,3 +24,4 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 module.exports = app
+
