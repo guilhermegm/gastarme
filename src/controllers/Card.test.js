@@ -40,4 +40,18 @@ describe('Card Controller', () => {
         expect(response.body).toEqual({ message: 'Card already registered' })
       })
   })
+
+  it('should get list of cards for user', async () => {
+    await request(app)
+      .get('/cards')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .then(response => {
+        expect(response.body[0]).toHaveProperty('id')
+        expect(response.body[0]).toHaveProperty('bearer_name')
+        expect(response.body[0]).toHaveProperty('limit')
+        expect(response.body[0]).toHaveProperty('maturity')
+        expect(response.body[0]).toHaveProperty('createdAt')
+      })
+  })
 })

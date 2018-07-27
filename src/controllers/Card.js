@@ -38,6 +38,32 @@ const CardControllerFactory = ({ User, Wallet, Card }) => {
     }
   })
 
+  router.get('/cards', jwt.authentication({ User }), async (req, res, next) => {
+    try {
+      const paginationData = await Joi.validate(req.query, paginationSchema)
+      const cardsFound = await Card.findAll({
+        where: {
+          userId: req.user.id,
+        },
+        limit: paginationData.pageSize,
+        offset: paginationData.page * paginationData.pageSize - paginationData.pageSize,
+      })
+
+      return res.status(200).json(
+        cardsFound.map(card => ({
+          id: card.id,
+          bearer_name: card.bearer_name,
+          limit: card.limit,
+          maturity: card.maturity,
+          validity: card.validity,
+          createdAt: card.createdAt,
+        })),
+      )
+    } catch (error) {
+      return next(error)
+    }
+  })
+
   return router
 }
 
