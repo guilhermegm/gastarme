@@ -1,14 +1,29 @@
 const Sequelize = require('sequelize')
+const sequelize = require('../common/sequelize')
 
 const WalletFactory = ({ sequelize }) => {
-  const Wallet = sequelize.define('Wallets', {
+  const Model = sequelize.define('Wallets', {
+    userId: Sequelize.INTEGER,
     limit: Sequelize.DECIMAL(12, 2),
     available_limit: Sequelize.DECIMAL(12, 2),
   })
 
-  Wallet.belongsTo(User)
+  Model.associate = function(models) {
+    models.Wallet.belongsTo(models.User)
+  }
 
-  return Wallet
+  return {
+    Model,
+    create: async function({ user }) {
+      return await this.Model.create({
+        userId: user.id,
+        limit: 0,
+        available_limit: 0,
+      })
+    },
+  }
 }
 
-module.exports = WalletFactory
+const factory = (state = { sequelize }) => WalletFactory(state)
+
+module.exports = factory
