@@ -4,6 +4,7 @@
   "description": "Multi-Credit Card",
   "main": "index.js",
   "scripts": {
+    "start": "./node_modules/.bin/nodemon ./src/index.js"
   },
   "author": "Guilherme Giacchetto Moreira",
   "license": "ISC",
