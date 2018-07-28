@@ -13,7 +13,7 @@ const User = UserFactory()
 const Wallet = WalletFactory()
 const CardController = CardControllerFactory({ Card, User, Wallet })
 const UserController = UserControllerFactory({ User })
-const WalletController = WalletControllerFactory({ User, Wallet })
+const WalletController = WalletControllerFactory({ Card, User, Wallet })
 
 app.use(bodyParser.json())
 

@@ -35,4 +35,12 @@ describe('Wallet Controller', () => {
         expect(response.body).toHaveProperty('available_limit')
       })
   })
+
+  it('should buy using a wallet of user', async () => {
+    await request(app)
+      .post('/wallets/4/buy')
+      .send({ totalValue: '210.10' })
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201)
+  })
 })

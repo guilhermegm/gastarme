@@ -1,9 +1,16 @@
 const express = require('express')
+const Joi = require('joi')
 const jwt = require('../common/jwt')
 
 const router = express.Router()
 
-const WalletControllerFactory = ({ User, Wallet }) => {
+const buySchema = Joi.object().keys({
+  totalValue: Joi.string()
+    .regex(/^\d{1,12}\.\d\d$/, 'currency')
+    .required(),
+})
+
+const WalletControllerFactory = ({ Card, User, Wallet }) => {
   router.post('/wallets', jwt.authentication({ User }), async (req, res, next) => {
     try {
       const wallet = await Wallet.create(
@@ -59,6 +66,28 @@ const WalletControllerFactory = ({ User, Wallet }) => {
         limit: wallet.limit,
         available_limit: wallet.available_limit,
       })
+    } catch (error) {
+      return next(error)
+    }
+  })
+
+  router.post('/wallets/:walletId/buy', jwt.authentication({ User }), async (req, res, next) => {
+    try {
+      const walletId = await Joi.validate(
+        req.params.walletId,
+        Joi.number()
+          .integer()
+          .required(),
+      )
+      const buyData = await Joi.validate(req.body, buySchema)
+      const invoice = await Wallet.buy({
+        id: walletId,
+        totalValue: buyData.totalValue,
+        user: req.user,
+        Card,
+      })
+
+      return res.status(201).json(invoice)
     } catch (error) {
       return next(error)
     }
