@@ -64,6 +64,27 @@ const CardControllerFactory = ({ User, Wallet, Card }) => {
     }
   })
 
+  router.delete('/cards/:cardId', jwt.authentication({ User }), async (req, res, next) => {
+    try {
+      const cardId = await Joi.validate(
+        req.params.cardId,
+        Joi.number()
+          .integer()
+          .required(),
+      )
+
+      const deleteCount = await Card.destroy({ where: { id: cardId, userId: req.user.id } })
+
+      if (deleteCount === 0) {
+        throw { message: 'Not found' }
+      }
+
+      return res.status(204).json()
+    } catch (error) {
+      return next(error)
+    }
+  })
+
   return router
 }
 

@@ -5,6 +5,7 @@ describe('Card Controller', () => {
   const token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNTMyNzE4Mjk1LCJleHAiOjE1MzMzMjMwOTV9.kSUWDEtjEMuc3u8C4bBr5sYPwbymDB8jb-eHMneceQU'
   const cardNumber = `123 456 ${parseInt(Math.random() * 10000)}`
+  let firstCard
 
   it('should create a card for wallet', async () => {
     await request(app)
@@ -47,11 +48,30 @@ describe('Card Controller', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .then(response => {
+        firstCard = response.body[0]
+
         expect(response.body[0]).toHaveProperty('id')
         expect(response.body[0]).toHaveProperty('bearer_name')
         expect(response.body[0]).toHaveProperty('limit')
         expect(response.body[0]).toHaveProperty('maturity')
         expect(response.body[0]).toHaveProperty('createdAt')
+      })
+  })
+
+  it('should delete a card of user', async () => {
+    await request(app)
+      .delete(`/cards/${firstCard.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(204)
+  })
+
+  it('should try to delete a card that was deleted', async () => {
+    await request(app)
+      .delete(`/cards/${firstCard.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(500)
+      .then(response => {
+        expect(response.body).toEqual({ message: 'Not found' })
       })
   })
 })
