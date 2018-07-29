@@ -1,14 +1,29 @@
-const request = require('supertest')
+const requestSuperTest = require('supertest')
 const app = require('../index')
+const testHelper = require('../common/testHelper')
+
+const request = requestSuperTest(app)
+let userData
+let userLogged
+let userWallets
+let userCards
 
 describe('Card Controller', () => {
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNTMyNzE4Mjk1LCJleHAiOjE1MzMzMjMwOTV9.kSUWDEtjEMuc3u8C4bBr5sYPwbymDB8jb-eHMneceQU'
   const cardNumber = `123 456 ${parseInt(Math.random() * 10000)}`
-  let firstCard
+
+  beforeAll(async () => {
+    userData = await testHelper.createUser({ request })
+    userLogged = await testHelper.loginUser({
+      email: userData.email,
+      password: userData.password,
+      request,
+    })
+    await testHelper.createWallet({ userToken: userLogged.token, request })
+    userWallets = await testHelper.getWallets({ userToken: userLogged.token, request })
+  })
 
   it('should create a card for wallet', async () => {
-    await request(app)
+    await request
       .post('/cards')
       .send({
         number: cardNumber,
@@ -17,14 +32,14 @@ describe('Card Controller', () => {
         validity: '2021-10-10',
         limit: '1000.00',
         maturity: 3,
-        walletId: 4,
+        walletId: userWallets[0].id,
       })
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(201)
   })
 
   it('should try to create a card and get already registered', async () => {
-    await request(app)
+    await request
       .post('/cards')
       .send({
         number: cardNumber,
@@ -33,9 +48,9 @@ describe('Card Controller', () => {
         validity: '2021-10-10',
         limit: '1000.00',
         maturity: 30,
-        walletId: 4,
+        walletId: userWallets[0].id,
       })
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(500)
       .then(response => {
         expect(response.body).toEqual({ message: 'Card already registered' })
@@ -43,12 +58,12 @@ describe('Card Controller', () => {
   })
 
   it('should get list of cards for user', async () => {
-    await request(app)
+    await request
       .get('/cards')
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(200)
       .then(response => {
-        firstCard = response.body[0]
+        userCards = response.body
 
         expect(response.body[0]).toHaveProperty('id')
         expect(response.body[0]).toHaveProperty('bearer_name')
@@ -59,16 +74,16 @@ describe('Card Controller', () => {
   })
 
   it('should delete a card of user', async () => {
-    await request(app)
-      .delete(`/cards/${firstCard.id}`)
-      .set('Authorization', `Bearer ${token}`)
+    await request
+      .delete(`/cards/${userCards[0].id}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(204)
   })
 
   it('should try to delete a card that was deleted', async () => {
-    await request(app)
-      .delete(`/cards/${firstCard.id}`)
-      .set('Authorization', `Bearer ${token}`)
+    await request
+      .delete(`/cards/${userCards[0].id}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(500)
       .then(response => {
         expect(response.body).toEqual({ message: 'Not found' })
