@@ -1,26 +1,39 @@
-const request = require('supertest')
+const requestSuperTest = require('supertest')
 const app = require('../index')
+const testHelper = require('../common/testHelper')
+
+const request = requestSuperTest(app)
+let userData
+let userLogged
+let userWallet
+let userAdminLogged
+let userTwoWallet
 
 describe('Wallet Controller', () => {
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNTMyNzE4Mjk1LCJleHAiOjE1MzMzMjMwOTV9.kSUWDEtjEMuc3u8C4bBr5sYPwbymDB8jb-eHMneceQU'
-  const adminToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjY0LCJpYXQiOjE1MzI4MzA0NDYsImV4cCI6MTUzMzQzNTI0Nn0.iCqReA-TJYog0y7O0glbfkMwNXG33njgEv-hpw2XyLE'
-  let firstWallet
+  beforeAll(async () => {
+    userData = await testHelper.createUser({ request })
+    userLogged = await testHelper.loginUser({
+      email: userData.email,
+      password: userData.password,
+      request,
+    })
+    userAdminLogged = await testHelper.loginUserAdmin({ request })
+  })
 
   it('should create a wallet for user', async () => {
-    await request(app)
+    await request
       .post('/wallets')
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(201)
   })
 
   it('should get wallets of user', async () => {
-    await request(app)
+    await request
       .get('/wallets')
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(200)
       .then(response => {
+        userWallet = response.body[0]
         expect(response.body[0]).toHaveProperty('id')
         expect(response.body[0]).toHaveProperty('limit')
         expect(response.body[0]).toHaveProperty('available_limit')
@@ -28,9 +41,9 @@ describe('Wallet Controller', () => {
   })
 
   it('should get wallet of user by id', async () => {
-    await request(app)
-      .get('/wallets/4')
-      .set('Authorization', `Bearer ${token}`)
+    await request
+      .get(`/wallets/${userWallet.id}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(200)
       .then(response => {
         expect(response.body).toHaveProperty('id')
@@ -40,20 +53,20 @@ describe('Wallet Controller', () => {
   })
 
   it('should buy using a wallet of user', async () => {
-    await request(app)
-      .post('/wallets/4/buy')
+    await request
+      .post(`/wallets/${userWallet.id}/buy`)
       .send({ totalValue: '210.10' })
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(201)
   })
 
   it('should get all wallets', async () => {
-    await request(app)
+    await request
       .get('/wallets')
-      .set('Authorization', `Bearer ${adminToken}`)
+      .set('Authorization', `Bearer ${userAdminLogged.token}`)
       .expect(200)
       .then(response => {
-        firstWallet = response.body[0]
+        userTwoWallet = response.body[0]
 
         expect(response.body[0]).toHaveProperty('id')
         expect(response.body[0]).toHaveProperty('limit')
@@ -62,16 +75,16 @@ describe('Wallet Controller', () => {
   })
 
   it('should delete a wallet', async () => {
-    await request(app)
-      .delete(`/wallets/${firstWallet.id}`)
-      .set('Authorization', `Bearer ${adminToken}`)
+    await request
+      .delete(`/wallets/${userTwoWallet.id}`)
+      .set('Authorization', `Bearer ${userAdminLogged.token}`)
       .expect(204)
   })
 
   it('should try to delete a wallet without authorization', async () => {
-    await request(app)
-      .delete(`/wallets/${firstWallet.id}`)
-      .set('Authorization', `Bearer ${token}`)
+    await request
+      .delete(`/wallets/${userTwoWallet.id}`)
+      .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(500)
       .then(response => {
         expect(response.body).toEqual({ message: 'You are not authorized' })
