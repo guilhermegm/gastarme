@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "./node_modules/.bin/nodemon ./src/index.js",
-    "test": "./node_modules/.bin/jest --env=node"
+    "test": "./node_modules/.bin/jest --env=node",
+    "prettierfy": "./node_modules/.bin/prettier ./src/*.js ./src/**/*.js --write"
   },
   "author": "Guilherme Giacchetto Moreira",
   "license": "ISC",
