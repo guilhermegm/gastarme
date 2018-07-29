@@ -24,8 +24,21 @@ const loginUserAdmin = async ({ request }) => {
   return response.body
 }
 
+const createWallet = async ({ userToken, request }) =>
+  await request.post('/wallets').set('Authorization', `Bearer ${userToken}`)
+
+const getWallets = async ({ userToken, request }) =>
+  await request
+    .get('/wallets')
+    .set('Authorization', `Bearer ${userToken}`)
+    .then(response => {
+      return response.body
+    })
+
 module.exports = {
   createUser,
   loginUser,
   loginUserAdmin,
+  createWallet,
+  getWallets,
 }
