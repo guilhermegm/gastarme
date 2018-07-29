@@ -93,6 +93,26 @@ const WalletControllerFactory = ({ Card, User, Wallet }) => {
     }
   })
 
+  router.delete(
+    '/wallets/:walletId',
+    jwt.authentication({ accessLevels: ['admin'], User }),
+    async (req, res, next) => {
+      try {
+        const walletId = await Joi.validate(
+          req.params.walletId,
+          Joi.number()
+            .integer()
+            .required(),
+        )
+        await Wallet.delete({ id: walletId, Card })
+
+        return res.status(204).send()
+      } catch (error) {
+        return next(error)
+      }
+    },
+  )
+
   return router
 }
 
