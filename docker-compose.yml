@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  gastarme:
+    image: node:10.7
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    entrypoint: >
+      bash -c "npm i && ./node_modules/.bin/nodemon ./src/index.js"
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: gastarme
+      POSTGRES_DB: gastarme
+      POSTGRES_PASSWORD: gastarme
+
+networks:
+  gastarme:
