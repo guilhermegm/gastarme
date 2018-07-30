@@ -4,6 +4,7 @@
   "description": "Multi-Credit Card",
   "main": "index.js",
   "scripts": {
+    "start": "docker-compose up",
     "test": "./node_modules/.bin/jest --env=node",
     "prettierfy": "./node_modules/.bin/prettier ./src/*.js ./src/**/*.js --write"
   },
