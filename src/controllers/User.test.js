@@ -17,4 +17,16 @@ describe('User Controller', () => {
       .send({ name: 'Test', password: 'abc123', email: newEmail })
       .expect(500)
   })
+
+  it('should login an user', async () => {
+    await request(app)
+      .post('/users/login')
+      .send({ email: newEmail, password: 'abc123' })
+      .expect(200)
+      .then(response => {
+        expect(response.body).toHaveProperty('token')
+        expect(response.body).toHaveProperty('user.id')
+        expect(response.body).toHaveProperty('user.name', 'Test')
+      })
+  })
 })
