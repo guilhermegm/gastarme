@@ -25,7 +25,7 @@ app.use(CardController)
 
 app.use((error, req, res, next) => {
   if (error.isJoi) {
-    return res.status(500).json(error.details)
+    return res.status(400).json(error.details)
   }
 
   return res.status(500).json(error)
