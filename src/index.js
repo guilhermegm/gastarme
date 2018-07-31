@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser')
 const express = require('express')
+const helmet = require('helmet')
 const CardFactory = require('./models/Card')
 const CardControllerFactory = require('./controllers/Card')
 const UserFactory = require('./models/User')
@@ -15,6 +16,7 @@ const CardController = CardControllerFactory({ Card, User, Wallet })
 const UserController = UserControllerFactory({ User })
 const WalletController = WalletControllerFactory({ Card, User, Wallet })
 
+app.use(helmet())
 app.use(bodyParser.json())
 
 app.use('/', UserController)
