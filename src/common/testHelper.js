@@ -35,10 +35,25 @@ const getWallets = async ({ userToken, request }) =>
       return response.body
     })
 
+const createCard = async ({ userToken, walletId, request }) =>
+  await request
+    .post('/cards')
+    .send({
+      number: `123 456 ${parseInt(Math.random() * 10000)}`,
+      bearer_name: 'Test Card',
+      cvv: '999',
+      validity: '2021-10-10',
+      limit: '1000.00',
+      maturity: 3,
+      walletId,
+    })
+    .set('Authorization', `Bearer ${userToken}`)
+
 module.exports = {
   createUser,
   loginUser,
   loginUserAdmin,
   createWallet,
   getWallets,
+  createCard,
 }
