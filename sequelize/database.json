@@ -7,5 +7,12 @@
     "dialect": "postgres"
   },
   "test": {},
-  "production": {}
+  "production": {
+    "username": "GASTARME_DB_USERNAME",
+    "password": "GASTARME_DB_PASSWORD",
+    "database": "GASTARME_DB_DATABASE",
+    "host": "GASTARME_DB_HOST",
+    "port": "GASTARME_DB_PORT",
+    "dialect": "postgres"
+  }
 }
