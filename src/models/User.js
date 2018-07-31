@@ -17,10 +17,10 @@ const UserFactory = ({ sequelize }) => {
 
   return {
     Model,
-    create: async function({ data }) {
+    create: async function({ name, email, password }) {
       const usersFound = await this.Model.findAll({
         where: {
-          email: data.email,
+          email: email,
         },
       })
 
@@ -29,8 +29,9 @@ const UserFactory = ({ sequelize }) => {
       }
 
       return await this.Model.create({
-        ...data,
-        password: await bcrypt.hash(data.password, 10),
+        name,
+        email,
+        password: await bcrypt.hash(password, 10),
         accessLevel: 'user',
       })
     },

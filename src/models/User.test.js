@@ -38,11 +38,11 @@ describe('User Model', () => {
       const User = UserFactory({ sequelize })
       const data = {
         name: 'Test',
-        password: 'abc',
         email: 'email@email.co',
+        password: 'abc',
       }
 
-      await User.create({ data })
+      await User.create(data)
 
       expect(UserModel.findAll.mock.calls.length).toBe(1)
       expect(UserModel.findAll).toBeCalledWith({
@@ -73,7 +73,7 @@ describe('User Model', () => {
       }
 
       try {
-        await User.create({ data })
+        await User.create(data)
       } catch (error) {
         expect(error).toEqual({ message: 'User already registered' })
       }
