@@ -4,7 +4,6 @@
   "description": "Multi-Credit Card",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/nodemon ./src/index.js",
     "test": "./node_modules/.bin/jest --env=node",
     "prettierfy": "./node_modules/.bin/prettier ./src/*.js ./src/**/*.js --write"
   },
@@ -19,6 +18,7 @@
     "joi": "^13.4.0",
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.22.2",
+    "pg": "^7.4.3",
     "sequelize": "^4.38.0",
     "sequelize-cli": "^4.0.0"
   },
