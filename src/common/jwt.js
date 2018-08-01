@@ -1,8 +1,12 @@
-const jwt = require('jsonwebtoken')
+const jwtDefault = require('jsonwebtoken')
 
 const JWT_SECRET = process.env.GASTARME_JWT_SECRET || 'hard-secret'
 
-const authentication = ({ accessLevels = ['user', 'admin'], User }) => async (req, res, next) => {
+const authentication = ({ accessLevels = ['user', 'admin'], jwt = jwtDefault, User }) => async (
+  req,
+  res,
+  next,
+) => {
   if (!req.headers.authorization) {
     return next({ message: 'You are not authenticated' })
   }
@@ -25,7 +29,7 @@ const authentication = ({ accessLevels = ['user', 'admin'], User }) => async (re
   return next()
 }
 
-const sign = ({ id }) => {
+const sign = ({ id, jwt = jwtDefault }) => {
   return jwt.sign(
     {
       id,
