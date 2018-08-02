@@ -35,4 +35,24 @@ describe('User Controller', () => {
         expect(response.body).toHaveProperty('user.name', 'Test')
       })
   })
+
+  it('should try to login an user with wrong email', async () => {
+    await request(app)
+      .post('/users/login')
+      .send({ email: 'someone@gastar.me', password: 'none' })
+      .expect(500)
+      .then(response => {
+        expect(response.body).toEqual({"message": "The email or password is not correctly"})
+      })
+  })
+
+  it('should try to login an user with wrong password', async () => {
+    await request(app)
+      .post('/users/login')
+      .send({ email: newEmail, password: 'none' })
+      .expect(500)
+      .then(response => {
+        expect(response.body).toEqual({"message": "The email or password is not correctly"})
+      })
+  })
 })
