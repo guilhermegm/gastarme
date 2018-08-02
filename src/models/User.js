@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const sequelize = require('../common/sequelize')
 
 const UserFactory = ({ sequelize }) => {
-  const Model = sequelize.define('Users', {
+  const User = sequelize.define('Users', {
     name: Sequelize.STRING,
     email: {
       type: Sequelize.STRING,
@@ -15,27 +15,7 @@ const UserFactory = ({ sequelize }) => {
     accessLevel: Sequelize.STRING,
   })
 
-  return {
-    Model,
-    create: async function({ name, email, password }) {
-      const usersFound = await this.Model.findAll({
-        where: {
-          email: email,
-        },
-      })
-
-      if (usersFound.length) {
-        throw { message: 'User already registered' }
-      }
-
-      return await this.Model.create({
-        name,
-        email,
-        password: await bcrypt.hash(password, 10),
-        accessLevel: 'user',
-      })
-    },
-  }
+  return User
 }
 
 const factory = (state = { sequelize }) => UserFactory(state)
