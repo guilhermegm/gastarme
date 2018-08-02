@@ -53,8 +53,8 @@ GASTARME_DB_PORT=
 
 ## Tests
 
-Inside the container, run:
+With the container up, run:
 
 ```
-npm run test
+docker exec -ti gastarme_gastarme_1 npm run test -- --watch
 ```
