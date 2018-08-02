@@ -12,10 +12,12 @@
   "dependencies": {
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
+    "decimal.js": "^10.0.1",
     "express": "^4.16.3",
     "express-jwt": "^5.3.1",
     "joi": "^13.4.0",
     "jsonwebtoken": "^8.3.0",
+    "moment": "^2.22.2",
     "sequelize": "^4.38.0",
     "sequelize-cli": "^4.0.0"
   },
