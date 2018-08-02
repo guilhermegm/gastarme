@@ -4,7 +4,10 @@
 
 ## Dependencies
 
-- Node.js v10.7, npm v6.1, Docker Compose v18.06
+- [Node.js](https://nodejs.org/en/download/) v10.7
+- [npm](https://www.npmjs.com/get-npm) v6.1
+- [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) v18.06
+- [Docker Compose](https://docs.docker.com/compose/install/) v1.22
 
 ## Running for development
 
