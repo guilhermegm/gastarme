@@ -1,7 +1,6 @@
 const Decimal = require('decimal.js')
 const moment = require('moment')
 const Sequelize = require('sequelize')
-const sequelize = require('../common/sequelize')
 
 const WalletFactory = ({ sequelize }) => {
   const Wallet = sequelize.define('Wallets', {
@@ -102,76 +101,4 @@ const WalletFactory = ({ sequelize }) => {
   return Wallet
 }
 
-const getDaysUntilMaturity = ({ maturity, momentNow = moment() }) => {
-  const today = momentNow
-    .clone()
-    .hours(0)
-    .minutes(0)
-    .seconds(0)
-  const maturityDate = momentNow
-    .clone()
-    .date(maturity)
-    .hours(0)
-    .minutes(0)
-    .seconds(0)
-
-  if (today.date() > maturity) {
-    maturityDate.add(1, 'month')
-  }
-
-  return maturityDate.diff(today, 'days')
-}
-
-async function getCardsToUse({ cards, totalValue }) {
-  let remainingValue = new Decimal(totalValue)
-
-  const sortByLimit = (prev, next) => (+prev.limit > +next.limit ? 1 : 0)
-  const sortByDaysUntilMaturity = (prev, next) => {
-    const prevDaysUntilMaturity = this.getDaysUntilMaturity({ maturity: prev.maturity })
-    const nextDaysUntilMaturity = this.getDaysUntilMaturity({ maturity: next.maturity })
-
-    return prevDaysUntilMaturity < nextDaysUntilMaturity ? 1 : 0
-  }
-  const filterCardsWithNewValues = (cardsWithNewValues, card) => {
-    if (+remainingValue && +card.limit) {
-      let value = 0
-
-      if (+remainingValue > +card.limit) {
-        value = card.limit
-        remainingValue = remainingValue.minus(card.limit)
-      } else {
-        value = remainingValue
-        remainingValue = '0.00'
-      }
-
-      cardsWithNewValues.push({
-        card,
-        newValues: {
-          newCardLimit: new Decimal(card.limit).minus(value).toString(),
-          value: value.toString(),
-        },
-      })
-    }
-
-    return cardsWithNewValues
-  }
-
-  const cardsWithNewValues = cards
-    .sort(sortByLimit)
-    .sort(sortByDaysUntilMaturity)
-    .reduce(filterCardsWithNewValues, [])
-
-  return +remainingValue ? [] : cardsWithNewValues
-}
-
-const calculateNewAvailableLimit = ({ cardsToUse, wallet }) =>
-  cardsToUse
-    .reduce(
-      (newAvailableLimit, cardToUse) => newAvailableLimit.minus(cardToUse.newValues.value),
-      new Decimal(wallet.available_limit),
-    )
-    .toString()
-
-const factory = (state = { sequelize }) => WalletFactory(state)
-
-module.exports = factory
+module.exports = WalletFactory
