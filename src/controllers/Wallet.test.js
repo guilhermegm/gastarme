@@ -4,8 +4,9 @@ const app = require('../index')
 describe('Wallet Controller', () => {
   const token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNTMyNzE4Mjk1LCJleHAiOjE1MzMzMjMwOTV9.kSUWDEtjEMuc3u8C4bBr5sYPwbymDB8jb-eHMneceQU'
-  const adminToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjY0LCJpYXQiOjE1MzI4MzA0NDYsImV4cCI6MTUzMzQzNTI0Nn0.iCqReA-TJYog0y7O0glbfkMwNXG33njgEv-hpw2XyLE'
-  let firstWallet;
+  const adminToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjY0LCJpYXQiOjE1MzI4MzA0NDYsImV4cCI6MTUzMzQzNTI0Nn0.iCqReA-TJYog0y7O0glbfkMwNXG33njgEv-hpw2XyLE'
+  let firstWallet
 
   it('should create a wallet for user', async () => {
     await request(app)
@@ -73,7 +74,7 @@ describe('Wallet Controller', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(500)
       .then(response => {
-        expect(response.body).toEqual({"message": "You are not authorized"})
+        expect(response.body).toEqual({ message: 'You are not authorized' })
       })
   })
 })
