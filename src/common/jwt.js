@@ -8,15 +8,19 @@ const authentication = ({ accessLevels = ['user', 'admin'], User }) => async (re
   }
 
   const token = req.headers.authorization.split(' ')[1]
-  const decoded = jwt.verify(token, JWT_SECRET)
 
-  const user = await User.findById(decoded.id)
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET)
+    const user = await User.findById(decoded.id)
 
-  if (!user || !accessLevels.includes(user.accessLevel)) {
+    if (!user || !accessLevels.includes(user.accessLevel)) {
+      return next({ message: 'You are not authorized' })
+    }
+
+    req.user = user
+  } catch (error) {
     return next({ message: 'You are not authorized' })
   }
-
-  req.user = user
 
   return next()
 }
