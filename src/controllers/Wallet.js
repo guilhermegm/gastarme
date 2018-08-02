@@ -10,6 +10,15 @@ const buySchema = Joi.object().keys({
     .required(),
 })
 
+const paginationSchema = Joi.object().keys({
+  page: Joi.number()
+    .integer()
+    .default(1),
+  pageSize: Joi.number()
+    .integer()
+    .default(20),
+})
+
 const WalletControllerFactory = ({ Card, User, Wallet }) => {
   router.post('/wallets', jwt.authentication({ User }), async (req, res, next) => {
     try {
