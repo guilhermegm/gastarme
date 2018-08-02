@@ -1,7 +1,5 @@
 # Gastar.me
 
-### Description
-
 ## Dependencies
 
 - [Node.js](https://nodejs.org/en/download/) v10.7
