@@ -19,7 +19,7 @@ const WalletController = WalletControllerFactory({ Card, User, Wallet })
 app.use(helmet())
 app.use(bodyParser.json())
 
-app.use('/', UserController)
+app.use(UserController)
 app.use(WalletController)
 app.use(CardController)
 
