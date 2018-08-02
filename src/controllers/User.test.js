@@ -5,10 +5,16 @@ describe('User Controller', () => {
   const newEmail = `email${parseInt(Math.random() * 10000)}@email.co`
 
   it('should create an user properly', async () => {
-    await request(app)
+    const response = await request(app)
       .post('/users')
       .send({ name: 'Test', password: 'abc123', email: newEmail })
       .expect(201)
+
+    expect(response.body).toHaveProperty('id')
+    expect(response.body).toHaveProperty('name', 'Test')
+    expect(response.body).toHaveProperty('email', newEmail)
+    expect(response.body).toHaveProperty('accessLevel', 'user')
+    expect(response.body).toHaveProperty('createdAt')
   })
 
   it('should throw error 500 when user exists', async () => {
