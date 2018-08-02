@@ -22,6 +22,29 @@ describe('Card Model', () => {
     })
   })
 
+  it('should associate card to wallet and user', () => {
+    const sequelize = {
+      define: jest.fn(() => ({})),
+    }
+    const Card = CardFactory({ sequelize })
+
+    const Wallet = 'Wallet'
+    const User = 'User'
+    const models = {
+      Card: {
+        belongsTo: jest.fn(),
+      },
+      User,
+      Wallet,
+    }
+
+    Card.associate(models)
+
+    expect(models.Card.belongsTo.mock.calls.length).toBe(2)
+    expect(models.Card.belongsTo).toBeCalledWith(Wallet)
+    expect(models.Card.belongsTo).toBeCalledWith(User)
+  })
+
   it('should register a card', async () => {
     const CardModel = {
       create: jest.fn(() => Promise.resolve()),
