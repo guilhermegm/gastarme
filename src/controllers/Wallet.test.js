@@ -34,6 +34,7 @@ describe('Wallet Controller', () => {
       .expect(200)
       .then(response => {
         userWallet = response.body[0]
+
         expect(response.body[0]).toHaveProperty('id')
         expect(response.body[0]).toHaveProperty('limit')
         expect(response.body[0]).toHaveProperty('available_limit')
@@ -53,11 +54,27 @@ describe('Wallet Controller', () => {
   })
 
   it('should buy using a wallet of user', async () => {
+    await testHelper.createCard({ userToken: userLogged.token, walletId: userWallet.id, request })
+
     await request
       .post(`/wallets/${userWallet.id}/buy`)
-      .send({ totalValue: '210.10' })
+      .send({ totalValue: '1000.00' })
       .set('Authorization', `Bearer ${userLogged.token}`)
       .expect(201)
+  })
+
+  it('should try to buy using a wallet without enough funds', async () => {
+    try {
+      await testHelper.createCard({ userToken: userLogged.token, walletId: userWallet.id, request })
+
+      await request
+        .post(`/wallets/${userWallet.id}/buy`)
+        .send({ totalValue: '1500.00' })
+        .set('Authorization', `Bearer ${userLogged.token}`)
+        .expect(500)
+    } catch (error) {
+      expect(error).toEqual({ message: "You don't have enough funds to buy" })
+    }
   })
 
   it('should get all wallets', async () => {
